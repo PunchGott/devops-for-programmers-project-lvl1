@@ -6,9 +6,12 @@ services:
       dockerfile: Dockerfile.production
     volumes:
       - "./app:/app:z"
-    command: "npm run dev"
+    command: bash -c 'sleep 3 && npm start'
     ports:
       - "8080:8080"
+    depends_on:
+      - db
+
   caddy:
     image: caddy:latest
     restart: unless-stopped
@@ -21,6 +24,13 @@ services:
       - caddy_config:/config
     depends_on:
       - app
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: project1
+      POSTGRES_PASSWORD: postgres
 
 volumes:
   caddy_data:
